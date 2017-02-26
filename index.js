@@ -1,11 +1,16 @@
 // for dev purposes:
 // require('dotenv').config();
 //
-if (!process.env.clientId || !process.env.clientSecret || !process.env.port ||
+if (!process.env.clientId || !process.env.clientSecret ||
     !process.env.mongoURI || !process.env.NINJA_ACCESS_KEY_ID || !process.env.NINJA_SECRET || !process.env.FRESHSERVICE_API ||
     !process.env.FRESHSERVICE_URI || !process.env.SlackChannel ) {
     console.log('Error: Specify clientId, clientSecret, mongoURI, NINJA_ACCESS_KEY_ID, NINJA_SECRET, FRESHSERVICE_API, FRESHSERVICE_URI, SlackChannel, and port in environment');
     process.exit(1);
+}
+
+if (!process.env.port) {
+    console.log('warning: ** Port not set. Setting to 3000');
+    process.env.port = 3000;
 }
 
 var Botkit = require('botkit');
