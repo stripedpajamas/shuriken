@@ -156,7 +156,7 @@ controller.on('rtm_open',function(bot) {
                 }
             });
 
-        }, 10000);
+        }, 300000);
     }
 });
 
