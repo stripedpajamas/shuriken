@@ -1,10 +1,10 @@
 // for dev purposes:
-// require('dotenv').config();
+//require('dotenv').config();
 //
 if (!process.env.clientId || !process.env.clientSecret || !process.env.PORT ||
     !process.env.mongoURI || !process.env.NINJA_ACCESS_KEY_ID || !process.env.NINJA_SECRET || !process.env.FRESHSERVICE_API ||
     !process.env.FRESHSERVICE_URI || !process.env.SlackChannel ) {
-    console.log('Error: Specify clientId, clientSecret, mongoURI, NINJA_ACCESS_KEY_ID, NINJA_SECRET, FRESHSERVICE_API, FRESHSERVICE_URI, SlackChannel, and port in environment');
+    console.log('Error: Specify clientId, clientSecret, mongoURI, NINJA_ACCESS_KEY_ID, NINJA_SECRET, FRESHSERVICE_API, FRESHSERVICE_URI, SlackChannel, and PORT in environment');
     process.exit(1);
 }
 
@@ -69,7 +69,7 @@ controller.on('rtm_open',function(bot) {
                 throw err;
             }
             db.close();
-            if (doc.latestAlert <= 0) {
+            if (doc && doc.latestAlert <= 0 || !doc) {
                 console.log('warning: ** Latest alert ID in MongoDB is bad. Setting to 0.');
                 ninjaReqAlerts.resource = '/v1/alerts/since/0';
                 return startShuriken();
