@@ -162,79 +162,78 @@ controller.on('rtm_open',function(bot) {
 });
 
 controller.on('interactive_message_callback', function(bot, message) {
-    if (message.actions[0].value === 'reset') {
-        bot.api.users.info({user: message.user}, function(err, info){
-            console.log(info.user.name);
-            console.log(info.user.id);
-            //check if it's the right user using info.user.name or info.user.id
-        });
-        /*
-        var resetAlertReq = {
-            method: 'DELETE',
-            contentMd5: null,
-            contentType: null,
-            date: null,
-            resource: '/v1/alerts/' + message.callback_id
-        };
-        request(ninjaConnection.generateOptions(resetAlertReq), function(err, response, body) {
-            if (err || response.statusCode !== 204) {
-                console.log('error: ** Errors from Ninja Reset Alert:', err, '\nResponse code:', response.statusCode);
-            }
-            bot.replyInteractive(message, {
-                attachments: [
-                    {
-                        fallback: 'Alert reset',
-                        title: message.original_message.attachments[0].title,
-                        text: message.original_message.attachments[0].text,
-                        color: 'good',
-                        fields: message.original_message.attachments[0].fields.concat({
-                            title: 'Alert has been reset!'
-                        }),
-                    }
-                ]
-            });
-        });
-        */
-    } else if (message.actions[0].value === 'ticket') {
-        /*
-        var ticketObject = {
-            helpdesk_ticket: {
-                description: message.original_message.attachments[0].text,
-                subject: message.original_message.attachments[0].title,
-                email: 'noreply@ninjarmm.com',
-                priority: 1,
-                status: 2,
-                source: 2,
-                ticket_type: 'Incident',
-            }
-        };
-        var fs_host = process.env.FRESHSERVICE_URI;
-        request(freshservice(fs_host, process.env.FRESHSERVICE_API, 'POST', '/helpdesk/tickets.json', ticketObject), function(err, res, body) {
-            console.log('info: ** Sending new ticket request to FreshService');
-            if (err) {
-                console.log('error: ** Ticket creation failed:', err);
-            }
-            console.log('info: ** Got this response from FreshService:', res.statusCode);
-            if (typeof body === 'object' && body.status) {
+    bot.api.users.info({user: message.user}, function(err, info){
+        var buttonPresser = null;
+        if (err) {
+            console.log('error: ** could not get user name of button presser');
+        } else {
+            buttonPresser = info.user.name;
+        }
+        if (message.actions[0].value === 'reset') {
+            var resetAlertReq = {
+                method: 'DELETE',
+                contentMd5: null,
+                contentType: null,
+                date: null,
+                resource: '/v1/alerts/' + message.callback_id
+            };
+            request(ninjaConnection.generateOptions(resetAlertReq), function(err, response, body) {
+                if (err || response.statusCode !== 204) {
+                    console.log('error: ** Errors from Ninja Reset Alert:', err, '\nResponse code:', response.statusCode);
+                }
                 bot.replyInteractive(message, {
                     attachments: [
                         {
-                            fallback: 'Ticket created',
+                            fallback: 'Alert reset',
                             title: message.original_message.attachments[0].title,
                             text: message.original_message.attachments[0].text,
                             color: 'good',
                             fields: message.original_message.attachments[0].fields.concat({
-                                title: 'Alert made into a ticket!',
-                                value: 'https://' + fs_host + '/helpdesk/tickets/' + body.item.helpdesk_ticket.display_id
+                                title: `Alert has been reset${buttonPresser ? ' by ' + buttonPresser : '!'}`
                             }),
                         }
                     ]
                 });
-            }
+            });
+        } else if (message.actions[0].value === 'ticket') {
+            var ticketObject = {
+                helpdesk_ticket: {
+                    description: message.original_message.attachments[0].text,
+                    subject: message.original_message.attachments[0].title,
+                    email: 'noreply@ninjarmm.com',
+                    priority: 1,
+                    status: 2,
+                    source: 2,
+                    ticket_type: 'Incident',
+                }
+            };
+            var fs_host = process.env.FRESHSERVICE_URI;
+            request(freshservice(fs_host, process.env.FRESHSERVICE_API, 'POST', '/helpdesk/tickets.json', ticketObject), function(err, res, body) {
+                console.log('info: ** Sending new ticket request to FreshService');
+                if (err) {
+                    console.log('error: ** Ticket creation failed:', err);
+                }
+                console.log('info: ** Got this response from FreshService:', res.statusCode);
+                if (typeof body === 'object' && body.status) {
+                    bot.replyInteractive(message, {
+                        attachments: [
+                            {
+                                fallback: 'Ticket created',
+                                title: message.original_message.attachments[0].title,
+                                text: message.original_message.attachments[0].text,
+                                color: 'good',
+                                fields: message.original_message.attachments[0].fields.concat({
+                                    title: `Alert made into a ticket${buttonPresser ? ' by ' + buttonPresser : '!'}`,
+                                    value: 'https://' + fs_host + '/helpdesk/tickets/' + body.item.helpdesk_ticket.display_id
+                                }),
+                            }
+                        ]
+                    });
+                }
 
-        })
-        */
-    }
+            })
+        }
+    });
 });
 // end of main shuriken code
 
