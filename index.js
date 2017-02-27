@@ -1,5 +1,5 @@
 // for dev purposes:
-//require('dotenv').config();
+require('dotenv').config();
 //
 if (!process.env.clientId || !process.env.clientSecret || !process.env.PORT ||
     !process.env.mongoURI || !process.env.NINJA_ACCESS_KEY_ID || !process.env.NINJA_SECRET || !process.env.FRESHSERVICE_API ||
@@ -163,6 +163,12 @@ controller.on('rtm_open',function(bot) {
 
 controller.on('interactive_message_callback', function(bot, message) {
     if (message.actions[0].value === 'reset') {
+        bot.api.users.info({user: message.user}, function(err, info){
+            console.log(info.user.name);
+            console.log(info.user.id);
+            //check if it's the right user using info.user.name or info.user.id
+        });
+        /*
         var resetAlertReq = {
             method: 'DELETE',
             contentMd5: null,
@@ -188,7 +194,9 @@ controller.on('interactive_message_callback', function(bot, message) {
                 ]
             });
         });
+        */
     } else if (message.actions[0].value === 'ticket') {
+        /*
         var ticketObject = {
             helpdesk_ticket: {
                 description: message.original_message.attachments[0].text,
@@ -225,6 +233,7 @@ controller.on('interactive_message_callback', function(bot, message) {
             }
 
         })
+        */
     }
 });
 // end of main shuriken code
