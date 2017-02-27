@@ -13,6 +13,7 @@ var mongoStorage = require('botkit-storage-mongo')({mongoUri: process.env.mongoU
 var request = require('request');
 var freshservice = require('./lib/freshservice');
 var mongo = require('mongodb');
+var moment = require('moment-timezone');
 
 var NinjaAPI = {
     accessKeyID: process.env.NINJA_ACCESS_KEY_ID || '',
@@ -138,7 +139,7 @@ controller.on('rtm_open',function(bot) {
                                     fields: [
                                         {
                                             title: 'Timestamp',
-                                            value: alert.timestamp,
+                                            value: !process.env.TZ ? alert.timestamp : moment.tz(alert.timestamp, 'ddd, DD MMM YYYY HH:mm:ss', 'Europe/London').clone().tz(process.env.TZ).format('llll'),
                                             short: true
                                         }
                                     ],
