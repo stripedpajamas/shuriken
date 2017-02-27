@@ -1,5 +1,5 @@
 // for dev purposes:
-require('dotenv').config();
+//require('dotenv').config();
 //
 if (!process.env.clientId || !process.env.clientSecret || !process.env.PORT ||
     !process.env.mongoURI || !process.env.NINJA_ACCESS_KEY_ID || !process.env.NINJA_SECRET || !process.env.FRESHSERVICE_API ||
